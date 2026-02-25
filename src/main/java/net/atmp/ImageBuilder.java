@@ -35,7 +35,7 @@
  */
 package net.atmp;
 
-import java.awt.Color;
+
 import java.awt.Graphics2D;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -44,8 +44,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
-
-import com.plantuml.api.cheerpj.WasmLog;
 
 import net.sourceforge.plantuml.AnnotatedBuilder;
 import net.sourceforge.plantuml.AnnotatedWorker;
@@ -63,6 +61,7 @@ import net.sourceforge.plantuml.core.ImageData;
 import net.sourceforge.plantuml.klimt.UStroke;
 import net.sourceforge.plantuml.klimt.UTranslate;
 import net.sourceforge.plantuml.klimt.awt.PortableImage;
+import net.sourceforge.plantuml.klimt.awt.XColor;
 import net.sourceforge.plantuml.klimt.color.ColorMapper;
 import net.sourceforge.plantuml.klimt.color.HColor;
 import net.sourceforge.plantuml.klimt.color.HColorGradient;
@@ -117,7 +116,10 @@ public class ImageBuilder {
 
 	private XDimension2D dimension;
 	private final FileFormatOption fileFormatOption;
+	// ::revert when __TEAVM__
 	private UDrawable udrawable;
+	// public UDrawable udrawable;
+	// ::done
 	private ClockwiseTopRightBottomLeft margin = ClockwiseTopRightBottomLeft.none();
 	private String metadata;
 	private long seed = 42;
@@ -259,7 +261,6 @@ public class ImageBuilder {
 				/ 96.0;
 		if (scaleFactor <= 0)
 			throw new IllegalStateException("Bad scaleFactor");
-		WasmLog.log("...image drawing...");
 		UGraphic ug = createUGraphic(dim, scaleFactor, diagram == null ? Pragma.createEmpty() : diagram.getPragma());
 
 		if (warnings.size() > 0) {
@@ -352,7 +353,7 @@ public class ImageBuilder {
 		final int red = rnd.nextInt(40);
 		final int green = rnd.nextInt(40);
 		final int blue = rnd.nextInt(40);
-		final Color c = new Color(red, green, blue);
+		final XColor c = new XColor(red, green, blue);
 		final HColor color = HColors.simple(c);
 		ug2.apply(color).apply(color.bg()).draw(URectangle.build(1, 1));
 	}
@@ -455,14 +456,14 @@ public class ImageBuilder {
 
 	private UGraphic createUGraphicPNG(double scaleFactor, final XDimension2D dim, String watermark,
 			FileFormat format) {
-		Color pngBackColor = new Color(0, 0, 0, 0);
+		XColor pngBackColor = new XColor(0, 0, 0, 0);
 
 		if (this.backcolor instanceof HColorSimple)
 			pngBackColor = this.backcolor.toColor(fileFormatOption.getColorMapper());
 
 		if (GlobalConfig.getInstance().boolValue(GlobalConfigKey.REPLACE_WHITE_BACKGROUND_BY_TRANSPARENT)
-				&& (Color.WHITE.equals(pngBackColor) || Color.BLACK.equals(pngBackColor)))
-			pngBackColor = new Color(0, 0, 0, 0);
+				&& (XColor.WHITE.equals(pngBackColor) || XColor.BLACK.equals(pngBackColor)))
+			pngBackColor = new XColor(0, 0, 0, 0);
 
 		final EmptyImageBuilder builder = new EmptyImageBuilder(watermark, (int) (dim.getWidth() * scaleFactor),
 				(int) (dim.getHeight() * scaleFactor), pngBackColor, stringBounder);

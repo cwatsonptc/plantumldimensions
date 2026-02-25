@@ -47,8 +47,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.plantuml.api.cheerpj.WasmLog;
-
 import net.sourceforge.plantuml.nio.PathSystem;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.preproc.ReadLineNumbered;
@@ -129,8 +127,7 @@ public final class BlockUmlBuilder implements DefinitionsContainer {
 					if (paused)
 						current.add(s);
 
-					WasmLog.log("...text loaded...");
-					final BlockUml uml = new BlockUml(pathSystem, current, defines.cloneMe(), null, this, charset);
+					final BlockUml uml = new BlockUml(this, pathSystem, current, defines.cloneMe(), null, charset);
 					usedFiles.addAll(uml.getIncluded());
 					blocks.add(uml);
 					current = null;

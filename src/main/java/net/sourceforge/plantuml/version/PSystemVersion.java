@@ -53,6 +53,7 @@ import net.sourceforge.plantuml.crash.ReportLog;
 import net.sourceforge.plantuml.dot.GraphvizUtils;
 import net.sourceforge.plantuml.klimt.awt.PortableImage;
 import net.sourceforge.plantuml.log.Logme;
+import net.sourceforge.plantuml.nio.NFolder;
 import net.sourceforge.plantuml.preproc.PreprocessingArtifact;
 import net.sourceforge.plantuml.preproc.Stdlib;
 import net.sourceforge.plantuml.preproc2.PreprocessorUtils;
@@ -62,12 +63,11 @@ import net.sourceforge.plantuml.security.SecurityProfile;
 import net.sourceforge.plantuml.security.SecurityUtils;
 
 public class PSystemVersion extends PlainStringsDiagram {
-	// ::remove file when __TEAVM__
-
 
 	PSystemVersion(UmlSource source, boolean withImage, List<String> args, PreprocessingArtifact preprocessing) {
 		super(source, preprocessing);
 		this.strings.addAll(args);
+		// ::comment when __CORE__ or __TEAVM__
 		try {
 			if (withImage) {
 				this.image = getPlantumlImage();
@@ -76,15 +76,18 @@ public class PSystemVersion extends PlainStringsDiagram {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		// ::done
 	}
 
-	private PSystemVersion(UmlSource source, List<String> args, PortableImage image, PreprocessingArtifact preprocessing) {
+	private PSystemVersion(UmlSource source, List<String> args, PortableImage image,
+			PreprocessingArtifact preprocessing) {
 		super(source, preprocessing);
 		this.strings.addAll(args);
 		this.image = image;
 		this.imagePosition = BACKGROUND_CORNER_BOTTOM_RIGHT;
 	}
 
+	// ::comment when __CORE__ or __TEAVM__
 	public static PortableImage getPlantumlImage() {
 		return getImage("logo.png");
 	}
@@ -105,7 +108,6 @@ public class PSystemVersion extends PlainStringsDiagram {
 		return getImage("favicon.png");
 	}
 
-	// ::comment when __CORE__
 	public static PortableImage getArecibo() {
 		return getImage("arecibo.png");
 	}
@@ -121,7 +123,6 @@ public class PSystemVersion extends PlainStringsDiagram {
 	public static PortableImage getApple2Image() {
 		return getImageWebp("apple2.png");
 	}
-	// ::done
 
 	private static PortableImage getImage(final String name) {
 		try {
@@ -135,7 +136,6 @@ public class PSystemVersion extends PlainStringsDiagram {
 		return new PortableImage(10, 10, BufferedImage.TYPE_INT_ARGB);
 	}
 
-	// ::comment when __CORE__
 	private static PortableImage getImageWebp(final String name) {
 		try (InputStream is = PSystemVersion.class.getResourceAsStream(name)) {
 			return SFile.getImageFromWebpButHeader(is);
@@ -144,7 +144,6 @@ public class PSystemVersion extends PlainStringsDiagram {
 		}
 		return new PortableImage(10, 10, BufferedImage.TYPE_INT_ARGB);
 	}
-	// ::done
 
 	private static BufferedImage transparentIcon;
 
@@ -167,26 +166,24 @@ public class PSystemVersion extends PlainStringsDiagram {
 		}
 		return transparentIcon;
 	}
+	// ::done
 
-	public static PSystemVersion createShowVersion2(UmlSource source, PreprocessingArtifact preprocessing) {
+	public static PSystemVersion createShowVersion(UmlSource source, PreprocessingArtifact preprocessing) {
 		final ReportLog strings = new ReportLog();
-		strings.add("<b>PlantUML version " + Version.versionString() + "</b> (" + Version.compileTimeString() + ")");
-		strings.add("(" + License.getCurrent() + " source distribution)");
-		// :: uncomment when __CORE__
-//		strings.add(" ");
-//		strings.add("Compiled with CheerpJ 2.3");
-//		strings.add("Powered by CheerpJ, a Leaning Technologies Java tool");
-		// :: done
-		// :: comment when __CORE__
+		strings.add("<b>PlantUML</b> \"\"" + Version.versionString() + "\"\"");
+		strings.add("<b>Git Commit</b> \"\"" + CompilationInfo.COMMIT + "\"\"");
+		strings.add("<b>Build Time</b> \"\"" + Version.compileTimeString() + "\"\"");
+
+		// ::revert when __TEAVM__
+		strings.add("<b>License</b> \"\"" + License.getCurrent() + "\"\"");
 		strings.checkOldVersionWarning();
 		if (SecurityUtils.getSecurityProfile() == SecurityProfile.UNSECURE) {
 			strings.add("Loaded from " + Version.getJarPath());
 
 			if (GlobalConfig.getInstance().boolValue(GlobalConfigKey.WORD)) {
 				strings.add("Word Mode");
-				// strings.add("Command Line: " + Run.getCommandLine());
 				strings.add("Current Dir: " + new SFile(".").getAbsolutePath());
-				strings.add("plantuml.include.path: " + PreprocessorUtils.getenv(SecurityUtils.PATHS_INCLUDES));
+				strings.add("plantuml.include.path: " + PreprocessorUtils.getenv(NFolder.PATHS_INCLUDES));
 			}
 		}
 		strings.add(" ");
@@ -204,7 +201,7 @@ public class PSystemVersion extends PlainStringsDiagram {
 		return new PSystemVersion(source, true, strings.asList(), preprocessing);
 	}
 
-	// :: comment when __CORE__
+	// :: comment when __CORE__ or __TEAVM__
 	public static PSystemVersion createStdLib(UmlSource source, PreprocessingArtifact preprocessing) {
 		final List<String> strings = new ArrayList<>();
 		Stdlib.addInfoVersion(strings, true);
@@ -214,8 +211,7 @@ public class PSystemVersion extends PlainStringsDiagram {
 	}
 	// ::done
 
-	public static PSystemVersion createShowAuthors2(UmlSource source, PreprocessingArtifact preprocessing) {
-		// Duplicate in OptionPrint
+	public static PSystemVersion createShowAuthors(UmlSource source, PreprocessingArtifact preprocessing) {
 		final List<String> strings = getAuthorsStrings(true);
 		return new PSystemVersion(source, true, strings, preprocessing);
 	}
@@ -224,8 +220,10 @@ public class PSystemVersion extends PlainStringsDiagram {
 		final List<String> strings = new ArrayList<>();
 		add(strings, "<b>PlantUML version " + Version.versionString() + "</b> (" + Version.compileTimeString() + ")",
 				withTag);
+		// :: comment when __CORE__ or __TEAVM__
 		add(strings, "(" + License.getCurrent() + " source distribution)", withTag);
 		add(strings, " ", withTag);
+		// ::done
 		add(strings, "<u>Original idea</u>: Arnaud Roques", withTag);
 		add(strings, "<u>Word Macro</u>: Alain Bertucat & Matthieu Sabatier", withTag);
 		add(strings, "<u>Word Add-in</u>: Adriaan van den Brand", withTag);
@@ -254,27 +252,17 @@ public class PSystemVersion extends PlainStringsDiagram {
 
 	}
 
-	// ::comment when __CORE__
-	public static PSystemVersion createTestDot(UmlSource source, PreprocessingArtifact preprocessing) throws IOException {
+	// ::comment when __CORE__ or __TEAVM__
+	public static PSystemVersion createTestDot(UmlSource source, PreprocessingArtifact preprocessing)
+			throws IOException {
 		final ReportLog strings = new ReportLog();
 		strings.add(Version.fullDescription());
 		GraphvizUtils.addDotStatus(strings, true);
 		return new PSystemVersion(source, false, strings.asList(), preprocessing);
 	}
-	// ::done
 
-//	public static PSystemVersion createDumpStackTrace() throws IOException {
-//		final List<String> strings = new ArrayList<>();
-//		final Throwable creationPoint = new Throwable();
-//		creationPoint.fillInStackTrace();
-//		for (StackTraceElement ste : creationPoint.getStackTrace()) {
-//			strings.add(ste.toString());
-//		}
-//		return new PSystemVersion(false, strings);
-//	}
-
-	// ::comment when __CORE__
-	public static PSystemVersion createKeyDistributor(UmlSource source, PreprocessingArtifact preprocessing) throws IOException {
+	public static PSystemVersion createKeyDistributor(UmlSource source, PreprocessingArtifact preprocessing)
+			throws IOException {
 		final LicenseInfo license = LicenseInfo.retrieveDistributor();
 		PortableImage im = null;
 		final List<String> strings = new ArrayList<>();

@@ -43,6 +43,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.asciiart.Wcwidth;
+import net.sourceforge.plantuml.klimt.awt.XColor;
 import net.sourceforge.plantuml.klimt.creole.Display;
 import net.sourceforge.plantuml.regex.Matcher2;
 import net.sourceforge.plantuml.regex.Pattern2;
@@ -496,10 +497,6 @@ public class StringUtils {
 		return s;
 	}
 
-	public static String trinNoTrace(CharSequence s) {
-		return s.toString().trim();
-	}
-
 	public static String manageEscapedTabs(String s) {
 		return s.replace("\\t", "\t");
 	}
@@ -515,47 +512,43 @@ public class StringUtils {
 	}
 
 	public static String trin(String arg) {
-		if (arg.length() == 0)
+		final int len = arg.length();
+		if (len == 0)
+			return "";
+
+		int start = 0;
+		int end = len - 1;
+
+		while (start <= end) {
+			final char cStart = arg.charAt(start);
+			if (cStart == ' ' || cStart == '\t' || cStart == '\r' || cStart == '\n' || cStart == '\0') {
+				start++;
+				continue;
+			}
+
+			final char cEnd = arg.charAt(end);
+			if (cEnd == ' ' || cEnd == '\t' || cEnd == '\r' || cEnd == '\n' || cEnd == '\0') {
+				end--;
+				continue;
+			}
+			break;
+		}
+
+		if (start == 0 && end == len - 1)
 			return arg;
 
-		return trinEndingInternal(arg, getPositionStartNonSpace(arg));
+		if (start > end)
+			return "";
+
+		return arg.substring(start, end + 1);
 	}
 
-	private static int getPositionStartNonSpace(String arg) {
-		int i = 0;
-		while (i < arg.length() && isSpaceOrTabOrNull(arg.charAt(i)))
-			i++;
-
-		return i;
-	}
-
-	private static String trinEnding(String arg) {
-		if (arg.length() == 0)
-			return arg;
-
-		return trinEndingInternal(arg, 0);
-	}
-
-	private static String trinEndingInternal(String arg, int from) {
-		int j = arg.length() - 1;
-		while (j >= from && isSpaceOrTabOrNull(arg.charAt(j)))
-			j--;
-
-		if (from == 0 && j == arg.length() - 1)
-			return arg;
-
-		return arg.substring(from, j + 1);
+	public static String trinNoTrace(CharSequence s) {
+		return s.toString().trim();
 	}
 
 	private static boolean isSpaceOrTabOrNull(char c) {
 		return c == ' ' || c == '\t' || c == '\r' || c == '\n' || c == '\0';
-	}
-
-	public static String sharp000000(int color) {
-		final int v = 0xFFFFFF & color;
-		String s = "000000" + Integer.toHexString(v).toUpperCase();
-		s = s.substring(s.length() - 6);
-		return "#" + s;
 	}
 
 	// ::comment when __CORE__ or __HAXE__ or __TEAVM__

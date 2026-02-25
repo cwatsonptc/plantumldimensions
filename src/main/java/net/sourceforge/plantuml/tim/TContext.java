@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.DefinitionsContainer;
 import net.sourceforge.plantuml.FileSystem;
@@ -67,7 +68,6 @@ import net.sourceforge.plantuml.preproc.ReadLine;
 import net.sourceforge.plantuml.preproc.ReadLineList;
 import net.sourceforge.plantuml.preproc.ReadLineReader;
 import net.sourceforge.plantuml.preproc.ReadLineWithYamlHeader;
-import net.sourceforge.plantuml.preproc.DiagramExtractor;
 import net.sourceforge.plantuml.preproc.Sub;
 import net.sourceforge.plantuml.preproc.UncommentReadLine;
 import net.sourceforge.plantuml.preproc2.PreprocessorIncludeStrategy;
@@ -75,6 +75,7 @@ import net.sourceforge.plantuml.preproc2.PreprocessorUtils;
 import net.sourceforge.plantuml.security.SFile;
 import net.sourceforge.plantuml.security.SURL;
 import net.sourceforge.plantuml.skin.Pragma;
+import net.sourceforge.plantuml.teavm.browser.BrowserLog;
 import net.sourceforge.plantuml.text.StringLocated;
 import net.sourceforge.plantuml.text.TLineType;
 import net.sourceforge.plantuml.theme.Theme;
@@ -192,7 +193,6 @@ public class TContext {
 	}
 
 	private void addStandardFunctions(Defines defines) {
-		// ::comment when __TEAVM__
 		functionsSet.addFunction(new AlwaysFalse());
 		functionsSet.addFunction(new AlwaysTrue());
 		functionsSet.addFunction(new Backslash());
@@ -212,12 +212,16 @@ public class TContext {
 		functionsSet.addFunction(new Filename(defines));
 		functionsSet.addFunction(new FilenameNoExtension(defines));
 		functionsSet.addFunction(new FunctionExists());
+		// ::comment when __TEAVM__
 		functionsSet.addFunction(new GetAllStdlib());
 		functionsSet.addFunction(new GetAllTheme());
+		// ::done
 		functionsSet.addFunction(new GetCurrentTheme());
 		functionsSet.addFunction(new GetJsonKey());
 		functionsSet.addFunction(new GetJsonType());
+		// ::comment when __TEAVM__
 		functionsSet.addFunction(new GetStdlib());
+		// ::done
 		functionsSet.addFunction(new GetVariableValue());
 		functionsSet.addFunction(new GetVersion());
 		functionsSet.addFunction(new Getenv());
@@ -234,7 +238,9 @@ public class TContext {
 		functionsSet.addFunction(new JsonSet());
 		functionsSet.addFunction(new LeftAlign());
 		functionsSet.addFunction(new Lighten());
+		// ::comment when __TEAVM__
 		functionsSet.addFunction(new LoadJson());
+		// ::done
 		// functionsSet.addFunction(new LoadJsonLegacy());
 		functionsSet.addFunction(new LogicalAnd());
 		functionsSet.addFunction(new LogicalNand());
@@ -268,7 +274,6 @@ public class TContext {
 		functionsSet.addFunction(new Upper());
 		functionsSet.addFunction(new VariableExists());
 		functionsSet.addFunction(new Xargs());
-		// ::done
 		// %standard_exists_function
 		// %str_replace
 		// !exit
@@ -335,16 +340,19 @@ public class TContext {
 
 	public TValue executeLines(TMemory memory, List<StringLocated> body, TFunctionType ftype, boolean modeSpecial)
 			throws EaterException {
+		BrowserLog.consoleLog(TContext.class, "executeLines start (" + body.size() + " lines)");
 		final CodeIterator it = buildCodeIterator(memory, body);
 
 		StringLocated s = null;
 		while ((s = it.peek()) != null) {
 			final TValue result = executeOneLineSafe(memory, s, ftype, modeSpecial);
-			if (result != null)
+			if (result != null) {
+				BrowserLog.consoleLog(TContext.class, "executeLines ok -> " + result);
 				return result;
-
+			}
 			it.next();
 		}
+		BrowserLog.consoleLog(TContext.class, "executeLines return null");
 		return null;
 
 	}
@@ -364,7 +372,9 @@ public class TContext {
 	private TValue executeOneLineSafe(TMemory memory, StringLocated s, TFunctionType ftype, boolean modeSpecial)
 			throws EaterException {
 		try {
+			// ::comment when __TEAVM__
 			this.debug.add(s);
+			// ::done
 			return executeOneLineNotSafe(memory, s, ftype, modeSpecial);
 		} catch (Exception e) {
 			if (e instanceof EaterException)
@@ -433,12 +443,14 @@ public class TContext {
 		} else if (type == TLineType.LOG) {
 			this.executeLog(memory, s);
 			return null;
-		} else if (s.getString().matches("^\\s+$")) {
+		} else if (ONLY_WHITESPACE_NON_EMPTY.matcher(s.getString()).matches()) {
 			return null;
 		} else {
 			throw new EaterException("Compile Error " + ftype + " " + type, s);
 		}
 	}
+
+	private static final Pattern ONLY_WHITESPACE_NON_EMPTY = Pattern.compile("^\\s+$");
 
 	private void addPlain(TMemory memory, StringLocated s) throws EaterException {
 		final StringLocated tmp[] = applyFunctionsAndVariablesInternal(memory, s);
@@ -778,7 +790,6 @@ public class TContext {
 //	}
 
 	private void executeInclude(TMemory memory, StringLocated s) throws EaterException {
-		// ::comment when __TEAVM__
 		final EaterInclude include = new EaterInclude(s.getTrimmed());
 		include.analyze(this, memory);
 		String what = include.getWhat();
@@ -793,29 +804,30 @@ public class TContext {
 		ReadLine reader = null;
 		PathSystem saveImportedFiles = null;
 		try {
-			if (what.startsWith("http://") || what.startsWith("https://")) {
+			if (what.startsWith("<") && what.endsWith(">")) {
+				final String stdlibPath = what.substring(1, what.length() - 1);
+				saveImportedFiles = this.pathSystem;
+				// ::revert when __TEAVM__
+				InputFile tmp = this.pathSystem.getInputFile(what);
+				this.pathSystem = this.pathSystem.changeCurrentDirectory(tmp.getParentFolder());
+				reader = PreprocessorUtils.getReaderStdlibInclude(s, stdlibPath);
+				// java.io.InputStream is = this.pathSystem.getTeaVMInputStream(what);
+				// reader = ReadLineReader.create(new java.io.InputStreamReader(is), what);
+				// ::done
+			} else if (what.startsWith("http://") || what.startsWith("https://")) {
+				// ::comment when __TEAVM__
 				final SURL url = SURL.create(what);
 				if (url == null)
 					throw new EaterException("Cannot open URL", s);
 
 				reader = PreprocessorUtils.getReaderIncludeUrl(url, s, suf, charset);
-			} else if (what.startsWith("<") && what.endsWith(">")) {
-				final String stdlibPath = what.substring(1, what.length() - 1);
-//				final String libname = stdlibPath.substring(0, stdlibPath.indexOf('/'));
-				saveImportedFiles = this.pathSystem;
-				InputFile tmp = this.pathSystem.getInputFile(what);
-				this.pathSystem = this.pathSystem.changeCurrentDirectory(tmp.getParentFolder());
-				// this.importedFiles = this.importedFiles.withCurrentDir(new
-				// AParentFolderStdlib(s, libname));
-				reader = PreprocessorUtils.getReaderStdlibInclude(s, stdlibPath);
+				// ::done
 			} else if (what.startsWith("[") && what.endsWith("]")) {
 				throw new IOException("To be finished");
 				// reader = PreprocessorUtils.getReaderNonstandardInclude(s, what.substring(1,
 				// what.length() - 1));
-//			} else if (importedFiles.getCurrentDir() instanceof AParentFolderStdlib) {
-//				final AParentFolderStdlib folderStdlib = (AParentFolderStdlib) importedFiles.getCurrentDir();
-//				reader = folderStdlib.getReader(what);
 			} else {
+				// ::comment when __TEAVM__
 				final InputFile f2 = this.pathSystem.getInputFile(what);
 				if (f2 != null) {
 					if (strategy == PreprocessorIncludeStrategy.DEFAULT && filesUsedCurrent.contains(f2))
@@ -836,8 +848,8 @@ public class TContext {
 					saveImportedFiles = this.pathSystem;
 					this.pathSystem = this.pathSystem.withCurrentDir(f2.getParentFolder());
 					assert reader != null;
-					// filesUsedCurrent.add(f2);
 				}
+				// ::done
 			}
 			if (reader != null)
 				try {
@@ -854,7 +866,6 @@ public class TContext {
 				} finally {
 					if (saveImportedFiles != null)
 						this.pathSystem = saveImportedFiles;
-
 				}
 
 		} catch (IOException e) {
@@ -867,34 +878,28 @@ public class TContext {
 				} catch (IOException e) {
 					Logme.error(e);
 				}
-
 		}
 		throw new EaterException("cannot include " + what, s);
-		// ::done
 	}
 
 	public boolean isLegacyDefine(String functionName) {
-		for (Map.Entry<TFunctionSignature, TFunction> ent : functionsSet.functions().entrySet())
-			if (ent.getKey().getFunctionName().equals(functionName) && ent.getValue().getFunctionType().isLegacy())
+		for (TFunction func : functionsSet.getFunctionsByName(functionName))
+			if (func.getFunctionType().isLegacy())
 				return true;
 
 		return false;
 	}
 
 	public boolean isUnquoted(String functionName) {
-		for (Map.Entry<TFunctionSignature, TFunction> ent : functionsSet.functions().entrySet())
-			if (ent.getKey().getFunctionName().equals(functionName) && ent.getValue().isUnquoted())
+		for (TFunction func : functionsSet.getFunctionsByName(functionName))
+			if (func.isUnquoted())
 				return true;
 
 		return false;
 	}
 
 	public boolean doesFunctionExist(String functionName) {
-		for (Map.Entry<TFunctionSignature, TFunction> ent : functionsSet.functions().entrySet())
-			if (ent.getKey().getFunctionName().equals(functionName))
-				return true;
-
-		return false;
+		return functionsSet.doesFunctionExist(functionName);
 	}
 
 	@JawsStrange

@@ -48,6 +48,7 @@ import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.abel.EntityPosition;
 import net.sourceforge.plantuml.decoration.symbol.USymbols;
 import net.sourceforge.plantuml.dot.GraphvizVersion;
+import net.sourceforge.plantuml.klimt.awt.XColor;
 import net.sourceforge.plantuml.klimt.font.StringBounder;
 import net.sourceforge.plantuml.klimt.geom.HorizontalAlignment;
 import net.sourceforge.plantuml.skin.AlignmentParam;
@@ -56,7 +57,7 @@ import net.sourceforge.plantuml.skin.UmlDiagramType;
 import net.sourceforge.plantuml.style.ISkinParam;
 
 public class ClusterDotString {
-	// ::remove file when __CORE__ or __TEAVM__
+	// ::remove file when __CORE__
 
 	private final Cluster cluster;
 	private final ISkinParam skinParam;
@@ -73,11 +74,13 @@ public class ClusterDotString {
 
 	void printInternal(StringBuilder sb, Collection<SvekEdge> lines, StringBounder stringBounder, DotMode dotMode,
 			GraphvizVersion graphvizVersion, UmlDiagramType type) {
+		// ::comment when __TEAVM__
 		if (cluster.diagram.getPragma().isTrue(PragmaKey.KERMOR)) {
 			new ClusterDotStringKermor(cluster, skinParam).printInternal(sb, lines, stringBounder, dotMode,
 					graphvizVersion, type);
 			return;
 		}
+		// ::done
 		final boolean packed = isPacked();
 
 		if (packed) {
@@ -88,8 +91,11 @@ public class ClusterDotString {
 		}
 		final boolean thereALinkFromOrToGroup2 = isThereALinkFromOrToGroup(lines);
 		boolean thereALinkFromOrToGroup1 = thereALinkFromOrToGroup2;
+		// ::revert when __TEAVM__
 		final boolean useProtectionWhenThereALinkFromOrToGroup = graphvizVersion
 				.useProtectionWhenThereALinkFromOrToGroup();
+		// final boolean useProtectionWhenThereALinkFromOrToGroup = false;
+		// ::done
 		if (useProtectionWhenThereALinkFromOrToGroup == false)
 			thereALinkFromOrToGroup1 = false;
 
@@ -114,7 +120,7 @@ public class ClusterDotString {
 
 		sb.append("subgraph " + cluster.getClusterId() + " {");
 		sb.append("style=solid;");
-		sb.append("color=\"" + StringUtils.sharp000000(cluster.getColor()) + "\";");
+		sb.append("color=\"" + XColor.toHexRGBColor(cluster.getColor()) + "\";");
 
 		final String label;
 		if (cluster.isLabel()) {

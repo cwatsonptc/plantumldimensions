@@ -83,7 +83,6 @@ import net.sourceforge.plantuml.style.StyleSignatureBasic;
 
 public class NwDiagram extends UmlDiagram {
 
-	private boolean initDone;
 	private final Map<String, NServer> servers = new LinkedHashMap<>();
 	private final List<Network> networks = new ArrayList<>();
 	private final List<NwGroup> groups = new ArrayList<>();
@@ -97,10 +96,6 @@ public class NwDiagram extends UmlDiagram {
 
 	public NwDiagram(UmlSource source, PreprocessingArtifact preprocessing) {
 		super(source, UmlDiagramType.NWDIAG, null, preprocessing);
-	}
-
-	public void init() {
-		initDone = true;
 	}
 
 	private Network currentNetwork() {
@@ -129,9 +124,6 @@ public class NwDiagram extends UmlDiagram {
 	}
 
 	public CommandExecutionResult openGroup(String name) {
-		if (initDone == false)
-			return errorNoInit();
-
 		for (NStackable element : stack)
 			if (element instanceof NwGroup)
 				return CommandExecutionResult.error("Cannot nest group");
@@ -143,9 +135,6 @@ public class NwDiagram extends UmlDiagram {
 	}
 
 	public CommandExecutionResult openNetwork(String name) {
-		if (initDone == false)
-			return errorNoInit();
-
 		if (currentGroup() != null)
 			return CommandExecutionResult.error("Cannot open network in a group");
 
@@ -174,9 +163,6 @@ public class NwDiagram extends UmlDiagram {
 	}
 
 	public CommandExecutionResult closeSomething() {
-		if (initDone == false)
-			return errorNoInit();
-
 		if (stack.size() > 0)
 			stack.remove(0);
 
@@ -190,9 +176,6 @@ public class NwDiagram extends UmlDiagram {
 	}
 
 	public CommandExecutionResult link(String name1, String name2) {
-		if (initDone == false)
-			return errorNoInit();
-
 		NServer server1 = servers.get(name1);
 		if (server1 == null) {
 			if (networks.size() == 0)
@@ -251,9 +234,6 @@ public class NwDiagram extends UmlDiagram {
 	}
 
 	public CommandExecutionResult addElement(String name, String definition) {
-		if (initDone == false)
-			return errorNoInit();
-
 		final Map<String, String> props = toSet(definition);
 		NServer server = servers.get(name);
 		if (server == null) {
@@ -309,13 +289,9 @@ public class NwDiagram extends UmlDiagram {
 		return false;
 	}
 
-	private CommandExecutionResult errorNoInit() {
-		return CommandExecutionResult.error("Maybe you forget 'nwdiag {' in your diagram ?");
-	}
-
 	private static final Pattern p = Pattern.compile("\\s*(\\w+)\\s*=\\s*(\"([^\"]*)\"|[^\\s,]+)");
-	
-	private Map<String, String> toSet(String definition) {
+
+	public static Map<String, String> toSet(String definition) {
 		final Map<String, String> result = new HashMap<String, String>();
 		if (definition == null)
 			return result;
@@ -465,9 +441,6 @@ public class NwDiagram extends UmlDiagram {
 	}
 
 	public CommandExecutionResult setProperty(String property, String value) {
-		if (initDone == false)
-			return errorNoInit();
-
 		if ("address".equalsIgnoreCase(property) && currentNetwork() != null)
 			currentNetwork().setOwnAdress(value);
 

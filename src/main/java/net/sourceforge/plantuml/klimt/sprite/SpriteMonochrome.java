@@ -35,13 +35,14 @@
  */
 package net.sourceforge.plantuml.klimt.sprite;
 
-import java.awt.Color;
+
 import java.io.IOException;
 import java.io.OutputStream;
 
 import net.atmp.PixelImage;
 import net.sourceforge.plantuml.klimt.AffineTransformType;
 import net.sourceforge.plantuml.klimt.awt.PortableImage;
+import net.sourceforge.plantuml.klimt.awt.XColor;
 import net.sourceforge.plantuml.klimt.color.ColorMapper;
 import net.sourceforge.plantuml.klimt.color.HColor;
 import net.sourceforge.plantuml.klimt.color.HColorGradient;
@@ -177,7 +178,6 @@ public class SpriteMonochrome implements Sprite {
 	}
 
 	public UImage toUImage(ColorMapper colorMapper, HColor backcolor, HColor color) {
-		// ::revert when __TEAVM__
 		if (backcolor == null || backcolor.isTransparent())
 			backcolor = HColors.WHITE.withDark(HColors.BLACK);
 
@@ -200,14 +200,11 @@ public class SpriteMonochrome implements Sprite {
 					alpha = 255;
 				else
 					alpha = (int) (255 * (coef * 4 / maxCoef));
-				final Color c = gradient.getColor(colorMapper, coef, alpha);
+				final XColor c = gradient.getColor(colorMapper, coef, alpha);
 				im.setRGB(col, line, c.getRGB());
 			}
 
 		return new UImage(new PixelImage(im, AffineTransformType.TYPE_BILINEAR));
-		
-		// return null;
-		// ::done
 	}
 
 	@Override
