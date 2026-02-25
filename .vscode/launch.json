@@ -1,0 +1,219 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Attach to Remote Debug (port 5005)",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 5005
+        },
+        
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "RunInit",
+            "request": "launch",
+            "mainClass": "com.plantuml.api.cheerpj.v1.RunInit",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "Run",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.Run",
+            "projectName": "plantuml",
+            "args": ["--format", "dimen", "--output-dir", "out", "small.puml"]
+        },
+        {
+            "type": "java",
+            "name": "Splash",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.Splash",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "Blake2b$Engine",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.argon2.blake2.Blake2b$Engine",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "Tokens",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.code.Tokens",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "FtpServer",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.ftp.FtpServer",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "PathSystem",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.nio.PathSystem",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "MagicTable",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.oregon.MagicTable",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "PicoWebServer",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.picoweb.PicoWebServer",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "PicoWebServerMain",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.picoweb.PicoWebServerMain",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "Metadata",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.png.Metadata",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "TextConverter",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.stats.TextConverter",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "SudokuDLX",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.sudoku.SudokuDLX",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "AboutWindow",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.swing.AboutWindow",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "FontChecker",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.swing.FontChecker",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "LicenseWindow",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.swing.LicenseWindow",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "SpriteWindow",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.swing.SpriteWindow",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "LanguageDescriptor",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.syntax.LanguageDescriptor",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "TelnetServer",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.telnet.TelnetServer",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "License",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.version.License",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "LicenseInfo",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.version.LicenseInfo",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "Version",
+            "request": "launch",
+            "mainClass": "net.sourceforge.plantuml.version.Version",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "DocBookConverter",
+            "request": "launch",
+            "mainClass": "org.stathissideris.ascii2image.core.DocBookConverter",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "CompositeDiagramShape",
+            "request": "launch",
+            "mainClass": "org.stathissideris.ascii2image.graphics.CompositeDiagramShape",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "DiagramShape",
+            "request": "launch",
+            "mainClass": "org.stathissideris.ascii2image.graphics.DiagramShape",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "FontMeasurer",
+            "request": "launch",
+            "mainClass": "org.stathissideris.ascii2image.graphics.FontMeasurer",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "GridPattern",
+            "request": "launch",
+            "mainClass": "org.stathissideris.ascii2image.text.GridPattern",
+            "projectName": "plantuml"
+        },
+        {
+            "type": "java",
+            "name": "StringUtils",
+            "request": "launch",
+            "mainClass": "org.stathissideris.ascii2image.text.StringUtils",
+            "projectName": "plantuml"
+        }
+    ]
+}

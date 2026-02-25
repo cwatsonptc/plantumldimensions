@@ -176,6 +176,8 @@ publishing {
 
 tasks.withType<JavaCompile>().configureEach {
 	options.encoding = "UTF-8"
+	// Enable debug info for debugging
+	options.debugOptions.debugLevel = "source,lines,vars"
 }
 
 tasks.withType<Javadoc>().configureEach {

@@ -278,6 +278,9 @@ public enum CliFlag {
 	@CliFlagDoc(value = "Generate VDX files", level = 1)
 	T_VDX("--vdx", aliases(DEPRECATED("-tvdx"), DEPRECATED("-vdx")), Arity.UNARY_BOOLEAN, FileFormat.VDX),
 
+	@CliFlagDoc(value = "Generate mxGraph files", level = 1)
+	T_DIMEN("--dimen", Arity.UNARY_BOOLEAN, FileFormat.DIMEN),
+
 	@CliFlagDoc(value = "Generate XMI files for class diagrams", level = 1)
 	T_XMI("--xmi", aliases(DEPRECATED("-txmi"), DEPRECATED("-xmi")), Arity.UNARY_BOOLEAN, FileFormat.XMI_STANDARD),
 	T_XMI_ARGO("--txmi:argo", aliases(DEPRECATED("-xmi:argo")), Arity.UNARY_BOOLEAN, FileFormat.XMI_ARGO),

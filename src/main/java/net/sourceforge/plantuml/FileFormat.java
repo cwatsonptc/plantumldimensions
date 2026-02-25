@@ -86,6 +86,7 @@ public enum FileFormat {
 	HTML("html", "text/html"), //
 	HTML5("html5", "text/html"), //
 	VDX("vdx", "application/vnd.visio.xml"), //
+	DIMEN("dimen", "application/json"), //
 	LATEX("eps", "application/x-latex"), //
 	LATEX_NO_PREAMBLE("eps-no-preamble", "application/x-latex"), //
 	BASE64("base64", "text/plain; charset=x-user-defined"), //

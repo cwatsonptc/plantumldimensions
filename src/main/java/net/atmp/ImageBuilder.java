@@ -72,6 +72,7 @@ import net.sourceforge.plantuml.klimt.color.HColors;
 import net.sourceforge.plantuml.klimt.drawing.LimitFinder;
 import net.sourceforge.plantuml.klimt.drawing.UGraphic;
 import net.sourceforge.plantuml.klimt.drawing.debug.UGraphicDebug;
+import net.sourceforge.plantuml.klimt.drawing.dimen.UGraphicDimen;
 import net.sourceforge.plantuml.klimt.drawing.eps.EpsStrategy;
 import net.sourceforge.plantuml.klimt.drawing.eps.UGraphicEps;
 import net.sourceforge.plantuml.klimt.drawing.g2d.UGraphicG2d;
@@ -394,6 +395,9 @@ public class ImageBuilder {
 			return new UGraphicHtml5(backcolor, colorMapper, stringBounder);
 		case VDX:
 			return new UGraphicVdx(backcolor, colorMapper, stringBounder);
+		case DIMEN:
+			return new UGraphicDimen(scaleFactor, dim, getSvgLinkTarget(), getHoverPathColorRGB(), seed,
+					getPreserveAspectRatio());
 		case LATEX:
 			return new UGraphicTikz(backcolor, colorMapper, stringBounder, scaleFactor, true, pragma);
 		case LATEX_NO_PREAMBLE:
